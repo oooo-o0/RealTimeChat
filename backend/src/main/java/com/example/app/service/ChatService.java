@@ -1,5 +1,9 @@
 package com.example.app.service;
 
+import com.example.app.exception.UserException;
+import com.example.app.model.Chat;
+import com.example.app.model.User;
+
 /**
  * チャットに関するサービスのインターフェース
  */
