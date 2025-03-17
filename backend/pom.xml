@@ -68,6 +68,28 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- JWT (JSON Web Token) を扱うためのライブラリ -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<!-- JWT の実装部分を提供するライブラリ -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope> <!-- 実行時のみ必要 -->
+		</dependency>
+		<!-- JWT を JSON として扱うためのライブラリ (Jackson を使用) -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId><!--Gson を使う場合は jjwt-gson に変更可能 -->
+			<version>0.11.5</version>
+			<scope>runtime</scope> <!-- 実行時のみ必要 -->
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
