@@ -1,8 +1,12 @@
 package com.example.app.service;
 
+import java.util.List;
+
+import com.example.app.exception.ChatException;
 import com.example.app.exception.UserException;
 import com.example.app.model.Chat;
 import com.example.app.model.User;
+import com.example.app.payload.GroupChatRequest;
 
 /**
  * チャットに関するサービスのインターフェース
@@ -84,4 +88,4 @@ public interface ChatService {
      */
     public void deleteChat(Integer chatId, Integer userId) throws ChatException, UserException;
 }
-}
+

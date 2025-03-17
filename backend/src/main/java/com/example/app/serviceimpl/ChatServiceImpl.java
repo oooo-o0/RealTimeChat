@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.app.exception.ChatException;
 import com.example.app.exception.UserException;
 import com.example.app.model.Chat;
+import com.example.app.model.User;
+import com.example.app.payload.GroupChatRequest;
 import com.example.app.repository.ChatRepository;
 import com.example.app.service.ChatService;
 
@@ -127,9 +130,9 @@ public class ChatServiceImpl implements ChatService {
 
         if (chat.getAdmins().contains(reqUser)) {
             chat.getUsers().remove(user);
-            return this.chatRepository.save(chat);
+            return chat;
         } else if (chat.getUsers().contains(reqUser)) {
-            if (user.getId().equals(reqUser.getId())) {
+        	if (user.getId() == reqUser.getId()) {
                 chat.getUsers().remove(user);
                 return this.chatRepository.save(chat);
             }
