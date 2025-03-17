@@ -88,6 +88,14 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope> <!-- 実行時のみ必要 -->
 		</dependency>
+		<dependency>
+			<groupId>
+				org.springframework.boot
+			</groupId>
+			<artifactId>
+				spring-boot-starter-websocket
+			</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
