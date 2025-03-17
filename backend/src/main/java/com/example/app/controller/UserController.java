@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.exception.UserException;
 import com.example.app.model.User;
+import com.example.app.payload.ApiResponse;
 import com.example.app.payload.UpdateUserRequest;
 import com.example.app.serviceimpl.UserServiceImpl;
 

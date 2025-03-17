@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import com.example.app.config.TokenProvider;
 import com.example.app.exception.UserException;
+import com.example.app.model.User;
 import com.example.app.payload.UpdateUserRequest;
 import com.example.app.repository.UserRepository;
 import com.example.app.service.UserService;

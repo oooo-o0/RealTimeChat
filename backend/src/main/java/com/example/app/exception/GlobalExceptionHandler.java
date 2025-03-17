@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.example.app.payload.ErrorDetail;
+
 /**
  * アプリケーション全体で発生する例外を一元管理するクラス
  * - 各種例外ごとに適切なレスポンスを返す

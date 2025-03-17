@@ -1,7 +1,9 @@
 package com.example.app.service;
 import java.util.List;
 
-import com.example.app.model.User; 
+import com.example.app.exception.UserException;
+import com.example.app.model.User;
+import com.example.app.payload.UpdateUserRequest; 
 /**
  * ユーザー情報を操作するサービスインターフェース
  * - ユーザーの取得・更新・検索などの機能を提供

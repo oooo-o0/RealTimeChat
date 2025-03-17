@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.config.CustomUserService;
 import com.example.app.config.TokenProvider;
 import com.example.app.exception.UserException;
+import com.example.app.model.User;
 import com.example.app.repository.UserRepository;
 
 @RestController
