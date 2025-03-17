@@ -1,5 +1,6 @@
 package com.example.app.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import com.example.app.config.TokenProvider;
 import com.example.app.exception.UserException;
 import com.example.app.model.User;
 import com.example.app.payload.AuthResponse;
+import com.example.app.payload.LoginRequest;
 import com.example.app.repository.UserRepository;
 
 @RestController
