@@ -2,7 +2,6 @@ package com.example.app.controller;
 
 import java.util.List;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.app.exception.ChatException;
 import com.example.app.exception.UserException;
 import com.example.app.model.Chat;
+import com.example.app.model.User;
 import com.example.app.payload.ApiResponse;
 import com.example.app.payload.GroupChatRequest;
 import com.example.app.payload.SingleChatRequest;
