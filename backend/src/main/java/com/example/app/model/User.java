@@ -4,12 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * ユーザー情報を表すエンティティクラス
  * - データベースの `user` テーブルと対応
  */
 @Entity // JPAエンティティ（データベースのテーブルとマッピング）
+@Table(name = "User") // テーブル名を明示的に指定
 public class User {
 
     @Id // 主キー（PK）
