@@ -7,11 +7,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * メッセージのエンティティ（チャット内の各メッセージを表現）
  */
 @Entity
+@Table(name = "Message") // テーブル名を明示的に指定
 public class Message {
 
     @Id

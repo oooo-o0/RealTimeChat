@@ -5,18 +5,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
-/**
- * チャット（1対1 または グループ）のエンティティ
- */
 @Entity
+@Table(name = "Chat") // テーブル名を明示的に指定
 public class Chat {
 
     @Id
@@ -27,16 +29,29 @@ public class Chat {
     private String chatImage; // チャットアイコンのURL
     private boolean isGroup; // グループチャットかどうか
 
+    // 💡 ManyToMany の中間テーブルを明示的に指定
     @ManyToMany
+    @JoinTable(
+        name = "Chat_Admins",
+        joinColumns = @JoinColumn(name = "chat_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<User> admins = new HashSet<>(); // グループの管理者（グループのみ）
 
     @ManyToOne
+    @JoinColumn(name = "created_by") // 外部キーを明示的に指定
     private User createdBy; // チャット作成者
 
+    // 💡 ManyToMany の中間テーブルを明示的に指定
     @ManyToMany
+    @JoinTable(
+        name = "Chat_Users",
+        joinColumns = @JoinColumn(name = "chat_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<User> users = new HashSet<>(); // 参加しているユーザー
 
-    @OneToMany
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>(); // チャット内のメッセージ一覧
 
     /** コンストラクタ */
@@ -126,4 +141,5 @@ public class Chat {
                 + "]";
     }
 }
+
 
