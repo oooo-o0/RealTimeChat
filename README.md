@@ -30,26 +30,3 @@ RealTimeChat リアルタイム通信チャットシステム
 cd frontend
 npm start
 ```
-
-## コマンドでfrontend作成
- npx create-react-app frontend
-
-## 依存関係のインストール
-npm install @emotion/react
-npm install @emotion/styled
-npm install @mui/material
-npm install @testing-library/jest-dom
-npm install @testing-library/react
-npm install @testing-library/user-event
-npm install net
-npm install react
-npm install react-dom
-npm install react-icons
-npm install react-redux
-npm install react-router-dom
-npm install react-scripts
-npm install redux-thunk
-npm install sockjs-client
-npm install stompjs
-npm install web-vitals
-npm install --save-dev tailwindcss
