@@ -1,6 +1,11 @@
+/* Webkit系ブラウザ（Chrome, Safariなど）用のスクロールバーのスタイル設定 */
+
+/* スクロールバーの全体的な幅を設定 */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 5px; /* スクロールバーの幅を5pxに指定 */
 }
+
+/* スクロールバーのつまみ（スクロールできる部分）のスタイル設定 */
 ::-webkit-scrollbar-thumb {
-  background-color: gray;
+  background-color: gray; /* スクロールバーのつまみの色をグレーに設定 */
 }
