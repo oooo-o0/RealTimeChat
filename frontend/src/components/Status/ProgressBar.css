@@ -1,0 +1,23 @@
+/* プログレスバーのコンテナスタイル */
+.progress-bar-container {
+  width: 100%; /* 幅を100%に設定 */
+  height: 4px; /* 高さを4pxに設定 */
+  background-color: white; /* 背景色を白に設定 */
+  border-radius: 4px; /* 角を丸める */
+  overflow: hidden; /* はみ出した要素を非表示にする */
+  opacity: 0.5; /* 初期状態の透明度を50%に設定 */
+  transition: opacity 0.3s ease-out; /* 透明度の変化をスムーズに */
+  margin: 1rem; /* プログレスバーの周囲に余白を追加 */
+}
+
+/* アクティブなプログレスバーのコンテナのスタイル */
+.progress-bar-container .active {
+  opacity: 1; /* アクティブ時は透明度を100%にする */
+}
+
+/* 実際のプログレスバーのスタイル */
+.progress-bar {
+  height: 100%; /* 親要素（プログレスバーコンテナ）の高さを100%に設定 */
+  background-color: rgb(41, 41, 255); /* プログレスバーの色（青） */
+  border-radius: 4px; /* 角を丸める */
+}
