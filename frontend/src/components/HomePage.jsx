@@ -1,113 +1,298 @@
-import React from "react";
-import { useState } from "react";
-import { TbCircleDashed } from "react-icons/tb";
-import { BiCommentDetail } from "react-icons/bi";
-import { AiOutlineSearch } from "react-icons/ai";
-import { BsEmojiSmile, BsFilter, BsMicFill, BsThreeDotsVertical } from "react-icons/bs";
-import { ImAttachment } from "react-icons/im";
-import ChatCard from "./ChatCard/ChatCard";
-import MessageCard from "./MessageCard/MessageCard";
+import React, { useEffect, useRef, useState } from "react";
 import "./HomePage.css";
+import { useNavigate } from "react-router-dom";
+import Profile from "./Profile/Profile";
+import CreateGroup from "./Group/CreateGroup";
+import { useDispatch, useSelector } from "react-redux";
+import { currentUser, logoutAction, searchUser } from "../Redux/Auth/Action";
+import { createChat, getUsersChat } from "../Redux/Chat/Action";
+import { createMessage, getAllMessages } from "../Redux/Message/Action";
+import SockJs from "sockjs-client/dist/sockjs";
+import { over } from "stompjs";
+import ProfileSection from "./HomeComponents/ProfileSection";
+import SearchBar from "./HomeComponents/SearchBar";
+import ChatList from "./HomeComponents/ChatList";
+import MessageCard from "./MessageCard/MessageCard";
+import { AiOutlineSearch } from "react-icons/ai";
+import { BsEmojiSmile, BsMicFill, BsThreeDotsVertical } from "react-icons/bs";
+import { ImAttachment } from "react-icons/im";
 
-const HomePage = () => {
-  const [querys, setQuerys] = useState(null);
-  const [currentChat, setCurentChat] = useState(null);
-  const [content, setContent] = useState("");
+function HomePage() {
+  const [querys, setQuerys] = useState(""); // 検索クエリの状態を管理
+  const [currentChat, setCurrentChat] = useState(null); // 現在のチャットルーム情報を保持
+  const [content, setContent] = useState(""); // 入力されたメッセージの内容を保持
+  const [isProfile, setIsProfile] = useState(false); // プロフィール表示の状態を管理
+  const navigate = useNavigate(); // 画面遷移のためのフック
+  const [isGroup, setIsGroup] = useState(false); // グループチャットかどうかを判定
+  const [anchorEl, setAnchorEl] = useState(null); // メニューのアンカー要素（開閉を管理）
+  const open = Boolean(anchorEl); // メニューが開いているかどうかの状態
+  const dispatch = useDispatch(); // Reduxのdispatch関数（アクションを発行）
+  const { auth, chat, message } = useSelector((store) => store); // Reduxストアから認証情報・チャット情報・メッセージ情報を取得
+  const token = localStorage.getItem("token"); // ローカルストレージからJWTトークンを取得
+  const [stompClient, setStompClient] = useState(null); // WebSocketのSTOMPクライアントを管理
+  const [isConnected, setIsConnected] = useState(false); // WebSocketの接続状態を管理
+  const [messages, setMessages] = useState([]); // 受信したメッセージのリストを保持
+  const [lastMessages, setLastMessages] = useState({}); // 各チャットの最新メッセージを管理
+  const messageContainerRef = useRef(null); // メッセージリストのスクロール制御のためのref
+  useEffect(() => {
+    // メッセージが更新されるたびにスクロールを最下部に移動
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-  const handleClickOneChatCard = () => [setCurentChat(true)];
+  // WebSocket接続を確立する関数
+  const connect = () => {
+    const sock = new SockJs("http://localhost:8080/ws");
+    const temp = over(sock);
+    setStompClient(temp);
 
-  const handleSearch = () => {};
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+    };
 
-  const handleCreateNewMessage = () => {};
+    // WebSocketサーバーに接続
+    temp.connect(headers, onConnect, onError);
+  };
+
+  // 指定した名前のクッキーを取得する関数
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  }
+
+  // WebSocket接続エラー時のコールバック
+  const onError = (error) => {
+    console.log("on error ", error);
+  };
+
+  // WebSocket接続成功時のコールバック
+  const onConnect = () => {
+    setIsConnected(true);
+
+    // 現在のチャットに応じてWebSocketの購読を設定
+    if (stompClient && currentChat) {
+      if (currentChat.isGroupChat) {
+        // グループチャットのメッセージを購読
+        stompClient.subscribe(`/group/${currentChat?.id}`, onMessageReceive);
+      } else {
+        // ユーザー間のダイレクトメッセージを購読
+        stompClient.subscribe(`/user/${currentChat?.id}`, onMessageReceive);
+      }
+    }
+  };
+
+  // WebSocketから受信したメッセージを処理するコールバック
+  const onMessageReceive = (payload) => {
+    const receivedMessage = JSON.parse(payload.body);
+    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+  };
+
+  // WebSocket接続を確立するエフェクト
+  useEffect(() => {
+    connect();
+  }, []);
+
+  // WebSocket接続が確立されたらチャットを購読するエフェクト
+  useEffect(() => {
+    if (isConnected && stompClient && currentChat?.id) {
+      const subscription = currentChat.isGroupChat ? stompClient.subscribe(`/group/${currentChat.id}`, onMessageReceive) : stompClient.subscribe(`/user/${currentChat.id}`, onMessageReceive);
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [isConnected, stompClient, currentChat]);
+
+  // 新しいメッセージをWebSocket経由で送信するエフェクト
+  useEffect(() => {
+    if (message.newMessage && stompClient) {
+      stompClient.send("/app/message", {}, JSON.stringify(message.newMessage));
+      setMessages((prevMessages) => [...prevMessages, message.newMessage]);
+    }
+  }, [message.newMessage, stompClient]);
+
+  // Reduxストアのメッセージデータを `messages` ステートに反映するエフェクト
+  useEffect(() => {
+    if (message.messages) {
+      setMessages(message.messages);
+    }
+  }, [message.messages]);
+
+  // チャットが変更されるたびにメッセージを取得するエフェクト
+  useEffect(() => {
+    if (currentChat?.id) {
+      dispatch(getAllMessages({ chatId: currentChat.id, token }));
+    }
+  }, [currentChat, message.newMessage]);
+
+  // ユーザーのチャットとグループを取得するエフェクト
+  useEffect(() => {
+    dispatch(getUsersChat({ token }));
+  }, [chat.createdChat, chat.createdGroup]);
+
+  // ユーザーメニューを開く処理
+  const handleClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  // ユーザーメニューを閉じる処理
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // チャットカードがクリックされたときの処理
+  const handleClickOnChatCard = (userId) => {
+    dispatch(createChat({ token, data: { userId } }));
+  };
+
+  // ユーザー検索の処理
+  const handleSearch = (keyword) => {
+    dispatch(searchUser({ keyword, token }));
+  };
+
+  // 新しいメッセージを作成する処理
+  const handleCreateNewMessage = () => {
+    dispatch(
+      createMessage({
+        token,
+        data: { chatId: currentChat.id, content: content },
+      })
+    );
+    setContent(""); // メッセージ送信後に入力欄をクリア
+  };
+  // ユーザー情報を取得するエフェクト
+  useEffect(() => {
+    dispatch(currentUser(token));
+  }, [token]);
+
+  // 現在のチャットを設定する関数
+  const handleCurrentChat = (item) => {
+    setCurrentChat(item);
+  };
+
+  // チャットが変更された際にメッセージを取得するエフェクト
+  useEffect(() => {
+    chat?.chats &&
+      chat?.chats?.forEach((item) => {
+        dispatch(getAllMessages({ chatId: item.id, token }));
+      });
+  }, [chat?.chats, token, dispatch]);
+
+  // メッセージの変更時に lastMessages を更新するエフェクト
+  useEffect(() => {
+    const prevLastMessages = { ...lastMessages };
+    if (message.messages && message.messages.length > 0) {
+      message.messages.forEach((msg) => {
+        prevLastMessages[msg.chat.id] = msg;
+      });
+
+      setLastMessages(prevLastMessages);
+    }
+  }, [message.messages]);
+
+  // ユーザーのプロフィール画面に遷移する関数
+  const handleNavigate = () => {
+    setIsProfile(true);
+  };
+
+  // プロフィール画面を閉じる関数
+  const handleCloseOpenProfile = () => {
+    setIsProfile(false);
+  };
+
+  // 新しいグループを作成する関数
+  const handleCreateGroup = () => {
+    setIsGroup(true);
+  };
+
+  // ユーザーをログアウトする関数
+  const handleLogout = () => {
+    dispatch(logoutAction());
+    navigate("/signin");
+  };
+
+  // ユーザーの認証状態を確認するエフェクト
+  useEffect(() => {
+    if (!auth.reqUser) {
+      navigate("/signin");
+    }
+  }, [auth.reqUser]);
 
   return (
     <div className="relative">
-      <div className="w-[100vw] py-14 bg-[#aaeeff]">
+      {/* ヘッダー部分 */}
+      <div className="w-[100vw] py-14 bg-[#00a884]">
         <div className="flex bg-[#f0f2f5] h-[90vh] absolute top-[5vh] left-[2vw] w-[96vw]">
-          <div className="left w-[30%] bg-[#f1fcfc] h-full">
-            <div class="W-full">
-              <div className="flex justify-between items-center p-3">
-                <div className="flex items-center space-x-3">
-                  <img className="rounded-full w-10 h-10 cursor-pointer" src="https://cdn.pixabay.com/photo/2020/06/13/17/51/milky-way-5295160_1280.jpg" alt="" />
-                  <p>username</p>
-                </div>
-                <div className="space-x-3 text-2xl flex">
-                  <TbCircleDashed />
-                  <BiCommentDetail />
-                </div>
+          {/* 左サイドバー */}
+          <div className="left w-[30%] h-full bg-[#e8e9ec]">
+            {isProfile && (
+              <div className="w-full h-full">
+                <Profile handleCloseOpenProfile={handleCloseOpenProfile} />
               </div>
-
-              <div className="relative flex justify-center items-center bg-white py-4 px-3">
-                <input
-                  className="border-none outline-none bg-slate-200 rounded-md w-[93%] pl-9 py-2"
-                  type="text"
-                  placeholder="検索 or 新しくチャットを作成"
-                  onChange={(e) => {
-                    setQuerys(e.target.value);
-                    handleSearch(e.target.value);
-                  }}
-                  value={querys}
-                />
-                <AiOutlineSearch className="absolute left-5 top-7" />
-                <div>
-                  <BsFilter className="ml-4 text-3xl" />
-                </div>
+            )}
+            {isGroup && <CreateGroup setIsGroup={setIsGroup} />}
+            {!isProfile && !isGroup && (
+              <div className="w-full">
+                {/* プロフィールセクション */}
+                <ProfileSection auth={auth} isProfile={isProfile} isGroup={isGroup} handleNavigate={handleNavigate} handleClick={handleClick} handleCreateGroup={handleCreateGroup} handleLogout={handleLogout} handleClose={handleClose} open={open} anchorEl={anchorEl} />
+                {/* 検索バー */}
+                <SearchBar querys={querys} setQuerys={setQuerys} handleSearch={handleSearch} />
+                {/* チャットリスト */}
+                <ChatList querys={querys} auth={auth} chat={chat} lastMessages={lastMessages} handleClickOnChatCard={handleClickOnChatCard} handleCurrentChat={handleCurrentChat} />
               </div>
-              {/* 全てのチャット */}
-              <div className="bg-white overflow-y-scroll h-[76vh] px-3">
-                {querys &&
-                  [1, 1, 1, 1, 1].map((item) => (
-                    <div onClick={handleClickOneChatCard}>
-                      <hr />
-                      <ChatCard />
-                    </div>
-                  ))}
-              </div>
-            </div>
+            )}
           </div>
 
-          {!currentChat && (
-            <div className="w-[70%] flex flex-col items-center justify-center border h-full">
+          {/* 初期表示（デフォルトのWhatsApp画面） */}
+          {!currentChat?.id && (
+            <div className="w-[70%] flex flex-col items-center justify-center h-full">
               <div className="max-w-[70%] text-center">
-                <img src="https://cdn.pixabay.com/photo/2024/06/28/04/49/bubble-8858495_640.png" alt="" />
-                <h1 className="text-4xl text-gray-600">RealTimeChat Web</h1>
-                <p className="my-9">リアルタイム通信で会話ができます。</p>
+                <img className="ml-11 lg:w-[75%]" src="https://cdn.pixabay.com/photo/2015/08/03/13/58/whatsapp-873316_640.png" alt="whatsapp-icon" />
+                <h1 className="text-4xl text-gray-600">WhatsApp Web</h1>
+                <p className="my-9">Send and receive messages with WhatsApp and save time.</p>
               </div>
             </div>
           )}
 
-          {currentChat && (
+          {/* メッセージセクション */}
+          {currentChat?.id && (
             <div className="w-[70%] relative bg-blue-200">
-              <div className="header absolute top-0 w-full bg-[#f0f8fc]">
+              {/* メッセージのヘッダー部分 */}
+              <div className="header absolute top-0 w-full bg-[#f0f2f5]">
                 <div className="flex justify-between">
                   <div className="py-3 space-x-4 flex items-center px-3">
-                    <img className="w-10 h-10 rounded-full" src="https://cdn.pixabay.com/photo/2024/02/15/16/57/cat-8575768_640.png" alt="" />
-                    <p>username</p>
+                    <img className="w-10 h-10 rounded-full" src={currentChat.group ? currentChat.chat_image || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp" : auth.reqUser?.id !== currentChat.users[0]?.id ? currentChat.users[0]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp" : currentChat.users[1]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp"} alt="profile" />
+                    <p>{currentChat.group ? currentChat.chatName : auth.reqUser?.id !== currentChat.users[0]?.id ? currentChat.users[0].name : currentChat.users[1].name}</p>
                   </div>
-                  <div className="py-3 flex space-x-4 items-center px-3">
+                  <div className="flex py-3 space-x-4 items-center px-3">
                     <AiOutlineSearch />
                     <BsThreeDotsVertical />
                   </div>
                 </div>
               </div>
 
-              <div className="px-10 h-[85vh] overflow-y-scroll">
-                <div className="space-y-1 flex flex-col justify-center mt-20 py-2">
-                  {[1, 1, 1, 1, 1].map((item, i) => (
-                    <MessageCard isReqUserMessage={i % 2 === 0} content={"message"} />
-                  ))}
-                </div>
+              {/* メッセージ表示部分 */}
+              <div className="px-10 h-[85vh] overflow-y-scroll pb-10" ref={messageContainerRef}>
+                <div className="space-y-1 w-full flex flex-col justify-center items-end mt-20 py-2">{messages?.length > 0 && messages?.map((item, i) => <MessageCard key={i} isReqUserMessage={item?.user?.id !== auth?.reqUser?.id} content={item.content} timestamp={item.timestamp} profilePic={item?.user?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp"} />)}</div>
               </div>
 
-              <div className="footer bg-[#f0f8fc] absolute bottom-0 w-full py-3 text-2xl">
-                <div className="flex justify-between items-center px-5">
+              {/* メッセージ入力セクション */}
+              <div className="footer bg-[#f0f2f5] absolute bottom-0 w-full py-3 text-2xl">
+                <div className="flex justify-between items-center px-5 relative">
                   <BsEmojiSmile className="cursor-pointer" />
                   <ImAttachment />
+
+                  {/* メッセージ入力フィールド */}
                   <input
                     className="py-2 outline-none border-none bg-white pl-4 rounded-md w-[85%]"
                     type="text"
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="メッセージを入力"
+                    placeholder="Type message"
                     value={content}
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
@@ -125,6 +310,6 @@ const HomePage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default HomePage;
