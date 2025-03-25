@@ -10,7 +10,7 @@ const SelectedMember = ({ handleRemoveMember, member }) => {
         className="w-7 h-7 rounded-full"
         src={
           member.profile || // メンバーのプロフィール画像がある場合はそれを使用
-          "https://cdn.pixabay.com/photo/2023/09/04/06/59/dog-8232158_1280.jpg" // プロフィール画像がない場合のデフォルト画像
+          "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png" // プロフィール画像がない場合のデフォルト画像
         }
         alt="profile"
       />
