@@ -10,7 +10,7 @@ const SearchBar = ({ querys, setQuerys, handleSearch }) => {
       <input
         className="border-none outline-none bg-slate-200 rounded-md w-[93%] pl-9 py-3"
         type="text"
-        placeholder="Search or Start new chat"
+        placeholder="チャット or ユーザーを検索"
         onChange={(e) => {
           setQuerys(e.target.value); // 入力値を状態に反映
           handleSearch(e.target.value); // 検索処理を実行
