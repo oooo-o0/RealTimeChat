@@ -1,16 +1,28 @@
 body {
-  margin: 0;
+  margin: 0; /* ページ全体の余白をなくす */
+
+  /* 使用するフォントを指定（OSごとに最適なフォントを選択） */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+
+  /* macOS や iOS の WebKit ブラウザでフォントを滑らかに表示 */
   -webkit-font-smoothing: antialiased;
+
+  /* macOS の Firefox でフォントを滑らかに表示 */
   -moz-osx-font-smoothing: grayscale;
-  max-width: 100vw;
-  background-color: rgb(230, 241, 247);
+
+  /* ビューポートの最大幅を 100vh に制限 */
+  max-width: 100vh;
+
+  /* 背景色を淡いグレーに設定 */
+  background-color: rgb(240, 234, 234);
 }
 
 code {
+  /* コード部分のフォントを指定（モノスペースフォントを使用） */
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+/* Tailwind CSS の基本スタイル、コンポーネント、ユーティリティを適用 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
