@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")  // WebSocket のエンドポイント
-                .setAllowedOrigins("*")  // CORS 設定（すべてのオリジンを許可）
+                .setAllowedOrigins("http://localhost:3000")  // CORS 設定（すべてのオリジンを許可）
                 .withSockJS();  // SockJS を有効にする
     }
 
