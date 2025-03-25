@@ -51,7 +51,7 @@ const Profile = ({ handleCloseOpenProfile }) => {
           token: localStorage.getItem("token"), // ローカルストレージからトークンを取得
           data: { profile: data.url.toString() }, // アップロードした画像の URL を格納
         };
-        dispatch(updateUser(dataa)); // ユーザー情報を更新
+        dispatch(updateUser(data)); // ユーザー情報を更新
       });
   };
 
@@ -70,15 +70,15 @@ const Profile = ({ handleCloseOpenProfile }) => {
   return (
     <div className="w-full h-full">
       {/* ヘッダー部分 */}
-      <div className="flex items-center space-x-10 bg-[#008069] text-white pt-16 px-10 pb-5">
+      <div className="flex items-center space-x-10 bg-[#7dd4ff] text-white pt-16 px-10 pb-5">
         <BsArrowLeft className="cursor-pointer text-2xl font-bold" onClick={handleCloseOpenProfile} />
-        <p className="cursor-pointer font-semibold">Profile</p>
+        <p className="cursor-pointer font-semibold">プロフィールを編集</p>
       </div>
 
       {/* プロフィール画像更新エリア */}
       <div className="flex flex-col justify-center items-center my-12">
         <label htmlFor="imgInput">
-          <img className="rounded-full w-[15vw] h-[15vw] cursor-pointer" src={auth.reqUser.profile || tempPicture || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp?b=1&s=170667a&w=0&k=20&c=wpJ0QJYXdbLx24H5LK08xSgiQ3zNkCAD2W3F74qlUL0="} alt="" />
+          <img className="rounded-full w-[15vw] h-[15vw] cursor-pointer" src={auth.reqUser.profile || tempPicture || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"} alt="" />
         </label>
 
         <input onChange={(e) => uploadToCloudinary(e.target.files[0])} type="file" id="imgInput" className="hidden" />
@@ -86,7 +86,7 @@ const Profile = ({ handleCloseOpenProfile }) => {
 
       {/* 名前編集エリア */}
       <div className="bg-white px-3">
-        <p className="py-3">Your name</p>
+        <p className="py-3">ユーザー名</p>
 
         {/* 編集モードでないとき */}
         {!flag && (
@@ -107,7 +107,7 @@ const Profile = ({ handleCloseOpenProfile }) => {
 
       {/* 補足説明 */}
       <div className="px-3 my-5">
-        <p className="py-10">This is not your username or pin. This name will be visible to others.</p>
+        <p className="py-10">この名前は他のユーザに表示されます。</p>
       </div>
     </div>
   );
