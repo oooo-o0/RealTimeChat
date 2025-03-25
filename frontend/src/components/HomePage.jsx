@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { currentUser, logoutAction, searchUser } from "../Redux/Auth/Action";
 import { createChat, getUsersChat } from "../Redux/Chat/Action";
 import { createMessage, getAllMessages } from "../Redux/Message/Action";
-import SockJs from "sockjs-client/dist/sockjs";
-import { over } from "stompjs";
+
 import ProfileSection from "./HomeComponents/ProfileSection";
 import SearchBar from "./HomeComponents/SearchBar";
 import ChatList from "./HomeComponents/ChatList";
@@ -16,6 +15,8 @@ import MessageCard from "./MessageCard/MessageCard";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BsEmojiSmile, BsMicFill, BsThreeDotsVertical } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
+import { Client } from "@stomp/stompjs"; // Clientを正しくインポート
+import SockJS from "sockjs-client"; // SockJSもインポート
 
 function HomePage() {
   const [querys, setQuerys] = useState(""); // 検索クエリの状態を管理
@@ -43,17 +44,16 @@ function HomePage() {
 
   // WebSocket接続を確立する関数
   const connect = () => {
-    const sock = new SockJs("http://localhost:8080/ws");
-    const temp = over(sock);
-    setStompClient(temp);
+    const sock = new SockJS("http://localhost:8080/ws"); // SockJSインスタンスを作成
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-    };
+    const stompClient = new Client({
+      webSocketFactory: () => sock, // SockJSをWebSocket接続に使う
+      onConnect: onConnect, // 接続成功時のコールバック
+      onStompError: onError, // エラー時のコールバック
+    });
 
-    // WebSocketサーバーに接続
-    temp.connect(headers, onConnect, onError);
+    setStompClient(stompClient); // stompClientをステートに設定
+    stompClient.activate(); // WebSocket接続を開始
   };
 
   // 指定した名前のクッキーを取得する関数
@@ -226,8 +226,8 @@ function HomePage() {
   return (
     <div className="relative">
       {/* ヘッダー部分 */}
-      <div className="w-[100vw] py-14 bg-[#00a884]">
-        <div className="flex bg-[#f0f2f5] h-[90vh] absolute top-[5vh] left-[2vw] w-[96vw]">
+      <div className="w-[100vw] py-14 bg-[#b0e5ff]">
+        <div className="flex bg-[#f0f2f5] h-[90vh] absolute top-[5vh] left-[2vw] w-[96vw] floating-box">
           {/* 左サイドバー */}
           <div className="left w-[30%] h-full bg-[#e8e9ec]">
             {isProfile && (
@@ -248,13 +248,13 @@ function HomePage() {
             )}
           </div>
 
-          {/* 初期表示（デフォルトのWhatsApp画面） */}
+          {/* 初期表示 */}
           {!currentChat?.id && (
             <div className="w-[70%] flex flex-col items-center justify-center h-full">
               <div className="max-w-[70%] text-center">
-                <img className="ml-11 lg:w-[75%]" src="https://cdn.pixabay.com/photo/2015/08/03/13/58/whatsapp-873316_640.png" alt="whatsapp-icon" />
-                <h1 className="text-4xl text-gray-600">WhatsApp Web</h1>
-                <p className="my-9">Send and receive messages with WhatsApp and save time.</p>
+                <img className="ml-11 lg:w-[75%]" src="https://cdn.pixabay.com/photo/2024/06/28/04/49/bubble-8858495_640.png" alt="whatsapp-icon" />
+                <h1 className="text-4xl text-gray-600">RealTimeChat</h1>
+                <p className="my-9">リアルタイムでのメッセージ送受信ができます.</p>
               </div>
             </div>
           )}
