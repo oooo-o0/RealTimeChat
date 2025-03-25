@@ -74,7 +74,7 @@ const NewGroup = ({ groupMember, setIsGroup }) => {
       <div className="flex items-center space-x-10 bg-[#008069] text-white pt-16 px-10 pb-5">
         {/* 戻るボタン（左矢印アイコン） */}
         <BsArrowLeft className="cursor-pointer text-2xl font-bold" />
-        <p className="text-xl font-semibold">New Group</p>
+        <p className="text-xl font-semibold">新しいチャットを作成</p>
       </div>
 
       {/* グループ画像アップロードセクション */}
