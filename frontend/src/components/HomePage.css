@@ -9,3 +9,6 @@
 ::-webkit-scrollbar-thumb {
   background-color: gray; /* スクロールバーのつまみの色をグレーに設定 */
 }
+.floating-box {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
