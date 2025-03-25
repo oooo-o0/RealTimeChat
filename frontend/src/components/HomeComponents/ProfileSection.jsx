@@ -12,7 +12,7 @@ const ProfileSection = ({ auth, isProfile, isGroup, handleNavigate, handleClick,
     <div className="flex justify-between items-center p-3">
       {/* プロフィール画像とユーザー名の表示部分 */}
       <div onClick={handleNavigate} className="flex items-center space-x-3">
-        <img className="rounded-full w-10 h-10 cursor-pointer" src={auth.reqUser?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp?b=1&s=170667a&w=0&k=20&c=wpJ0QJYXdbLx24H5LK08xSgiQ3zNkCAD2W3F74qlUL0="} alt="profile" />
+        <img className="rounded-full w-10 h-10 cursor-pointer" src={auth.reqUser?.profile || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"} alt="profile" />
         <p>{auth.reqUser?.name}</p>
       </div>
 
@@ -39,9 +39,9 @@ const ProfileSection = ({ auth, isProfile, isGroup, handleNavigate, handleClick,
             }}
           >
             {/* メニュー項目 */}
-            <MenuItem onClick={handleNavigate}>Profile</MenuItem>
-            <MenuItem onClick={handleCreateGroup}>Create Group</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleNavigate}>プロフィール</MenuItem>
+            <MenuItem onClick={handleCreateGroup}>新規チャットを作成</MenuItem>
+            <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
           </Menu>
         </div>
       </div>
