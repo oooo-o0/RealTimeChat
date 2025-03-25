@@ -1,38 +1,44 @@
+/* .App クラス: 中央寄せのスタイル */
 .App {
-  text-align: center;
+  text-align: center; /* テキストを中央に配置 */
 }
 
+/* .App-logo クラス: ロゴのスタイル */
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  height: 40vmin; /* ビューポートの最小サイズの40%の高さを設定 */
+  pointer-events: none; /* ユーザーの操作を無効化（クリックしても反応しない） */
 }
 
+/* アニメーションの設定（ユーザーの設定がアニメーションを許可している場合） */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 20s linear; /* 20秒間隔で無限回転するアニメーション */
   }
 }
 
+/* .App-header クラス: ヘッダーのスタイル */
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-color: #282c34; /* 背景色をダークグレーに設定 */
+  min-height: 100vh; /* ビューポートの高さいっぱいを確保 */
+  display: flex; /* フレックスボックスを使用 */
+  flex-direction: column; /* 子要素を縦方向に配置 */
+  align-items: center; /* 中央揃え（水平方向） */
+  justify-content: center; /* 中央揃え（垂直方向） */
+  font-size: calc(10px + 2vmin); /* レスポンシブなフォントサイズ（ビューポートに応じて変動） */
+  color: white; /* テキストの色を白に設定 */
 }
 
+/* .App-link クラス: リンクのスタイル */
 .App-link {
-  color: #61dafb;
+  color: #61dafb; /* React の公式カラー（水色）を適用 */
 }
 
+/* App-logo のアニメーション定義 */
 @keyframes App-logo-spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg); /* 0度（初期位置） */
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg); /* 360度（1回転） */
   }
 }
