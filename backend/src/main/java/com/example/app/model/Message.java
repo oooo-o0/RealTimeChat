@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
  * メッセージのエンティティ（チャット内の各メッセージを表現）
  */
 @Entity
-@Table(name = "Message") // テーブル名を明示的に指定
+@Table(name = "message") // テーブル名を明示的に指定
 public class Message {
 
     @Id

@@ -31,9 +31,8 @@ public class ChatServiceImpl implements ChatService {
 
         // 既にチャットが存在するか確認
         Chat isChatExist = this.chatRepository.findSingleChatByUserIds(user, reqUser);
-
         if (isChatExist != null) {
-            return isChatExist; // 既存のチャットを返す
+            return isChatExist;
         }
 
         // 新しいチャット作成
@@ -42,6 +41,12 @@ public class ChatServiceImpl implements ChatService {
         chat.getUsers().add(user);
         chat.getUsers().add(reqUser);
         chat.setGroup(false);
+
+        // 相手ユーザーの情報を設定
+        chat.setChatName(user.getName()); // 相手の名前をセット
+        chat.setChatImage(user.getProfile() != null ? user.getProfile()
+                : "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"); // プロフィールが null
+        // の場合デフォルトを設定
 
         return this.chatRepository.save(chat);
     }
@@ -132,7 +137,7 @@ public class ChatServiceImpl implements ChatService {
             chat.getUsers().remove(user);
             return chat;
         } else if (chat.getUsers().contains(reqUser)) {
-        	if (user.getId() == reqUser.getId()) {
+            if (user.getId() == reqUser.getId()) {
                 chat.getUsers().remove(user);
                 return this.chatRepository.save(chat);
             }

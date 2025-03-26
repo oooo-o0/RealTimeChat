@@ -22,9 +22,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")  // WebSocket のエンドポイント
-                .setAllowedOrigins("http://localhost:3000")  // CORS 設定（すべてのオリジンを許可）
-                .withSockJS();  // SockJS を有効にする
+        registry.addEndpoint("/ws") // WebSocket のエンドポイント
+                .setAllowedOrigins("*") // CORS 設定（すべてのオリジンを許可）
+                .withSockJS(); // SockJS を有効にする
     }
 
     /**
@@ -37,9 +37,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app");  // クライアントからの送信先プレフィックス
-        registry.enableSimpleBroker("/group", "/user");  // クライアントへ送信するためのシンプルブローカー
-        registry.setUserDestinationPrefix("/user");  // ユーザーごとのプライベートメッセージのプレフィックス
+        registry.setApplicationDestinationPrefixes("/app"); // クライアントからの送信先プレフィックス
+        registry.enableSimpleBroker("/group", "/user"); // クライアントへ送信するためのシンプルブローカー
+        registry.setUserDestinationPrefix("/user"); // ユーザーごとのプライベートメッセージのプレフィックス
     }
 }
-

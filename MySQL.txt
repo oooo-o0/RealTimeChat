@@ -1,51 +1,79 @@
 -- データベースの作成
-CREATE DATABASE chat_system_db;
+CREATE DATABASE IF NOT EXISTS chat_system_db;
+
+-- 使用するデータベースの指定
 USE chat_system_db;
 
--- User テーブルの作成
-CREATE TABLE User (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    profile VARCHAR(255),
-    password VARCHAR(255) NOT NULL
-);
+-- user テーブルの作成
+CREATE TABLE `user` (
+    `id` INT NOT NULL AUTO_INCREMENT,        -- ユーザーID (AUTO_INCREMENT)
+    `name` VARCHAR(255) NOT NULL,            -- ユーザー名
+    `email` VARCHAR(255) NOT NULL,           -- メールアドレス
+    `profile` VARCHAR(255),                  -- プロフィール情報
+    `password` VARCHAR(255) NOT NULL,        -- パスワード（ハッシュ化されている）
+    PRIMARY KEY (`id`),                      -- 主キー設定
+    UNIQUE KEY `email` (`email`)             -- メールアドレスは一意
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Chat テーブルの作成
-CREATE TABLE Chat (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    chatName VARCHAR(255) NOT NULL,
-    chatImage VARCHAR(255),
-    isGroup BOOLEAN NOT NULL,
-    createdBy INT,
-    FOREIGN KEY (createdBy) REFERENCES User(id) ON DELETE SET NULL
-);
+-- chat テーブルの作成
+CREATE TABLE `chat` (
+    `id` INT NOT NULL AUTO_INCREMENT,        -- チャットID (AUTO_INCREMENT)
+    `chat_name` VARCHAR(255) DEFAULT NULL,   -- チャット名 (NULLを許容)
+    `chat_image` VARCHAR(255) DEFAULT NULL,  -- チャットアイコンURL (NULLを許容)
+    `is_group` BOOLEAN NOT NULL,             -- グループチャットかどうか
+    `created_by` INT NOT NULL,               -- 作成者ID (外部キー)
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`created_by`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Message テーブルの作成
-CREATE TABLE Message (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    content TEXT NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    chat_id INT,
-    user_id INT,
-    FOREIGN KEY (chat_id) REFERENCES Chat(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
-);
+-- message テーブルの作成
+CREATE TABLE `message` (
+    `id` INT NOT NULL AUTO_INCREMENT,        -- メッセージID (AUTO_INCREMENT)
+    `content` TEXT NOT NULL,                 -- メッセージ内容
+    `timestamp` DATETIME NOT NULL,           -- 送信日時
+    `chat_id` INT NOT NULL,                  -- チャットID (外部キー)
+    `user_id` INT NOT NULL,                  -- 送信者ID (外部キー)
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`chat_id`) REFERENCES `chat`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- チャットの管理者を管理する中間テーブル (多対多)
-CREATE TABLE Chat_Admins (
-    chat_id INT,
-    user_id INT,
-    PRIMARY KEY (chat_id, user_id),
-    FOREIGN KEY (chat_id) REFERENCES Chat(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
-);
+-- Chat_Admins テーブルの作成
+CREATE TABLE `chat_admins` (
+    `chat_id` INT NOT NULL,                   -- チャットID (外部キー)
+    `user_id` INT NOT NULL,                   -- ユーザーID (外部キー)
+    PRIMARY KEY (`chat_id`, `user_id`),
+    FOREIGN KEY (`chat_id`) REFERENCES `chat`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- チャットの参加者を管理する中間テーブル (多対多)
-CREATE TABLE Chat_Users (
-    chat_id INT,
-    user_id INT,
-    PRIMARY KEY (chat_id, user_id),
-    FOREIGN KEY (chat_id) REFERENCES Chat(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
-);
+-- Chat_Users テーブルの作成
+CREATE TABLE `chat_users` (
+    `chat_id` INT NOT NULL,                   -- チャットID (外部キー)
+    `user_id` INT NOT NULL,                   -- ユーザーID (外部キー)
+    PRIMARY KEY (`chat_id`, `user_id`),
+    FOREIGN KEY (`chat_id`) REFERENCES `chat`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- user_seq テーブルの作成
+CREATE TABLE `user_seq` (
+    `next_val` INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`next_val`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- chat_seq テーブルの作成
+CREATE TABLE `chat_seq` (
+    `next_val` INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`next_val`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- message_seq テーブルの作成
+CREATE TABLE `message_seq` (
+    `next_val` INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`next_val`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 初期値を設定する場合
+INSERT INTO `user_seq` (`next_val`) VALUES (1);
+INSERT INTO `chat_seq` (`next_val`) VALUES (1);
+INSERT INTO `message_seq` (`next_val`) VALUES (1);

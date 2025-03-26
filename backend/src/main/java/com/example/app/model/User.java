@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
  * - データベースの `user` テーブルと対応
  */
 @Entity // JPAエンティティ（データベースのテーブルとマッピング）
-@Table(name = "User") // テーブル名を明示的に指定
+@Table(name = "user") // テーブル名を明示的に指定
 public class User {
 
     @Id // 主キー（PK）

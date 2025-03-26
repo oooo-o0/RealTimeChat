@@ -18,7 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Chat") // テーブル名を明示的に指定
+@Table(name = "chat") // テーブル名を明示的に指定
 public class Chat {
 
     @Id
@@ -31,11 +31,7 @@ public class Chat {
 
     // 💡 ManyToMany の中間テーブルを明示的に指定
     @ManyToMany
-    @JoinTable(
-        name = "Chat_Admins",
-        joinColumns = @JoinColumn(name = "chat_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "chat_admins", joinColumns = @JoinColumn(name = "chat_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> admins = new HashSet<>(); // グループの管理者（グループのみ）
 
     @ManyToOne
@@ -44,18 +40,15 @@ public class Chat {
 
     // 💡 ManyToMany の中間テーブルを明示的に指定
     @ManyToMany
-    @JoinTable(
-        name = "Chat_Users",
-        joinColumns = @JoinColumn(name = "chat_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "chat_users", joinColumns = @JoinColumn(name = "chat_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>(); // 参加しているユーザー
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>(); // チャット内のメッセージ一覧
 
     /** コンストラクタ */
-    public Chat() {}
+    public Chat() {
+    }
 
     public Chat(Integer id, String chatName, String chatImage, boolean isGroup, Set<User> admins, User createdBy,
             Set<User> users, List<Message> messages) {
@@ -141,5 +134,3 @@ public class Chat {
                 + "]";
     }
 }
-
-
