@@ -266,7 +266,7 @@ function HomePage() {
               <div className="header absolute top-0 w-full bg-[#f0f2f5]">
                 <div className="flex justify-between">
                   <div className="py-3 space-x-4 flex items-center px-3">
-                    <img className="w-10 h-10 rounded-full" src={currentChat.group ? currentChat.chat_image || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp" : auth.reqUser?.id !== currentChat.users[0]?.id ? currentChat.users[0]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp" : currentChat.users[1]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp"} alt="profile" />
+                    <img className="w-10 h-10 rounded-full" src={currentChat.group ? currentChat.chat_image || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png" : auth.reqUser?.id !== currentChat.users[0]?.id ? currentChat.users[0]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp" : currentChat.users[1]?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp"} alt="profile" />
                     <p>{currentChat.group ? currentChat.chatName : auth.reqUser?.id !== currentChat.users[0]?.id ? currentChat.users[0].name : currentChat.users[1].name}</p>
                   </div>
                   <div className="flex py-3 space-x-4 items-center px-3">
@@ -278,7 +278,7 @@ function HomePage() {
 
               {/* メッセージ表示部分 */}
               <div className="px-10 h-[85vh] overflow-y-scroll pb-10" ref={messageContainerRef}>
-                <div className="space-y-1 w-full flex flex-col justify-center items-end mt-20 py-2">{messages?.length > 0 && messages?.map((item, i) => <MessageCard key={i} isReqUserMessage={item?.user?.id !== auth?.reqUser?.id} content={item.content} timestamp={item.timestamp} profilePic={item?.user?.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp"} />)}</div>
+                <div className="space-y-1 w-full flex flex-col justify-center items-end mt-20 py-2">{messages?.length > 0 && messages?.map((item, i) => <MessageCard key={i} isReqUserMessage={item?.user?.id !== auth?.reqUser?.id} content={item.content} timestamp={item.timestamp} profilePic={item?.user?.profile || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"} />)}</div>
               </div>
 
               {/* メッセージ入力セクション */}

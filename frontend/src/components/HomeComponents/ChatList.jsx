@@ -11,7 +11,7 @@ const ChatList = ({ querys, auth, chat, lastMessages, handleClickOnChatCard, han
             <hr /> {/* 各チャットの区切り線 */}
             <ChatCard
               name={item.name} // ユーザー名を表示
-              userImg={item.profile || "https://media.istockphoto.com/id/521977679/photo/silhouette-of-adult-woman.webp?b=1&s=170667a&w=0&k=20&c=wpJ0QJYXdbLx24H5LK08xSgiQ3zNkCAD2W3F74qlUL0="} // プロフィール画像がない場合はデフォルト画像を使用
+              userImg={item.profile || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"} // プロフィール画像がない場合はデフォルト画像を使用
               lastMessage={{
                 content: lastMessages[item.id]?.content || "Start your conversation", // 最新メッセージがある場合は表示、ない場合はデフォルトテキスト
                 timestamp: lastMessages[item.id]?.timestamp || "", // メッセージのタイムスタンプ
@@ -41,7 +41,7 @@ const ChatList = ({ querys, auth, chat, lastMessages, handleClickOnChatCard, han
                   ? item.users[0]?.name // ログインユーザーが `users[0]` でない場合、そのユーザー名を表示
                   : item.users[1]?.name // それ以外は `users[1]` のユーザー名を表示
               }
-              userImg={item.chatImage || "https://media.istockphoto.com/id/1455296779/photo/smiling-businesspeople-standing-arm-in-arm-in-an-office-hall.webp?b=1&s=170667a&w=0&k=20&c=0bdu3-mVcOw6FN_vIkwTx4pCE6jgL7Jy29bBWZhoiik="} // チャット画像がない場合はデフォルト画像を使用
+              userImg={item.chatImage || "https://cdn.pixabay.com/photo/2024/07/29/21/17/profile-8930641_640.png"} // チャット画像がない場合はデフォルト画像を使用
               lastMessage={{
                 content: lastMessages[item.id]?.content || "Start your conversation", // 最新メッセージがある場合は表示、ない場合はデフォルトテキスト
                 timestamp: lastMessages[item.id]?.timestamp || "", // メッセージのタイムスタンプ
